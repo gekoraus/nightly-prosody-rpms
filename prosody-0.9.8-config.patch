@@ -1,0 +1,108 @@
+Patch by Robert Scheck <robert@fedoraproject.org> for prosody >= 0.9.8 which sets defaults
+specific for Fedora and Red Hat Enterprise (including derivates like CentOS), adds helpful
+comments about optional dependencies and finally includes some upstream recommendations.
+
+--- prosody-0.9.8/prosody.cfg.lua.dist			2015-03-24 20:18:04.000000000 +0100
++++ prosody-0.9.8/prosody.cfg.lua.dist.config		2015-04-14 23:10:31.000000000 +0200
+@@ -44,7 +44,7 @@
+ 	
+ 	-- These are commented by default as they have a performance impact
+ 		--"privacy"; -- Support privacy lists
+-		--"compression"; -- Stream compression
++		--"compression"; -- Stream compression (Note: Requires installed lua-zlib RPM package)
+ 
+ 	-- Nice to have
+ 		"version"; -- Replies to server version requests
+@@ -63,7 +63,7 @@
+ 		--"http_files"; -- Serve static files from a directory over HTTP
+ 
+ 	-- Other specific functionality
+-		--"posix"; -- POSIX functionality, sends server to background, enables syslog, etc.
++		"posix"; -- POSIX functionality, sends server to background, enables syslog, etc.
+ 		--"groups"; -- Shared roster support
+ 		--"announce"; -- Send announcement to all online users
+ 		--"welcome"; -- Welcome users who register accounts
+@@ -87,8 +87,8 @@
+ -- These are the SSL/TLS-related settings. If you don't want
+ -- to use SSL/TLS, you may comment or remove this
+ ssl = {
+-	key = "certs/localhost.key";
+-	certificate = "certs/localhost.crt";
++	key = "/etc/pki/prosody/localhost.key";
++	certificate = "/etc/pki/prosody/localhost.crt";
+ }
+ 
+ -- Force clients to use encrypted connections? This option will
+@@ -129,7 +129,8 @@
+ -- through modules. An "sql" backend is included by default, but requires
+ -- additional dependencies. See http://prosody.im/doc/storage for more info.
+ 
+---storage = "sql" -- Default is "internal"
++--storage = "sql" -- Default is "internal" (Note: "sql" requires installed
++-- lua-dbi RPM package)
+ 
+ -- For the "sql" backend, you can uncomment *one* of the below to configure:
+ --sql = { driver = "SQLite3", database = "prosody.sqlite" } -- Default. 'database' is the filename.
+@@ -139,46 +140,21 @@
+ -- Logging configuration
+ -- For advanced logging see http://prosody.im/doc/logging
+ log = {
+-	info = "prosody.log"; -- Change 'info' to 'debug' for verbose logging
+-	error = "prosody.err";
+-	-- "*syslog"; -- Uncomment this for logging to syslog
+-	-- "*console"; -- Log to the console, useful for debugging with daemonize=false
++	-- Log everything of level "info" and higher (that is, all except "debug" messages)
++	-- to /var/log/prosody/prosody.log and errors also to /var/log/prosody/prosody.err
++	info = "/var/log/prosody/prosody.log"; -- Change 'info' to 'debug' for verbose logging
++	error = "/var/log/prosody/prosody.err"; -- Log errors also to file
++	-- error = "*syslog"; -- Log errors also to syslog
++	-- log = "*console"; -- Log to the console, useful for debugging with daemonize=false
+ }
+ 
+------------ Virtual hosts -----------
+--- You need to add a VirtualHost entry for each domain you wish Prosody to serve.
+--- Settings under each VirtualHost entry apply *only* to that host.
+-
+-VirtualHost "localhost"
+-
+-VirtualHost "example.com"
+-	enabled = false -- Remove this line to enable this host
+-
+-	-- Assign this host a certificate for TLS, otherwise it would use the one
+-	-- set in the global section (if any).
+-	-- Note that old-style SSL on port 5223 only supports one certificate, and will always
+-	-- use the global one.
+-	ssl = {
+-		key = "certs/example.com.key";
+-		certificate = "certs/example.com.crt";
+-	}
+-
+------- Components ------
+--- You can specify components to add hosts that provide special services,
+--- like multi-user conferences, and transports.
+--- For more information on components, see http://prosody.im/doc/components
+-
+----Set up a MUC (multi-user chat) room server on conference.example.com:
+---Component "conference.example.com" "muc"
+-
+--- Set up a SOCKS5 bytestream proxy for server-proxied file transfers:
+---Component "proxy.example.com" "proxy65"
+-
+----Set up an external component (default component port is 5347)
+---
+--- External components allow adding various services, such as gateways/
+--- transports to other networks like ICQ, MSN and Yahoo. For more info
+--- see: http://prosody.im/doc/components#adding_an_external_component
+---
+---Component "gateway.example.com"
+---	component_secret = "password"
++-- POSIX configuration, see also http://prosody.im/doc/modules/mod_posix
++pidfile = "/run/prosody/prosody.pid";
++--daemonize = false -- Default is "true"
++
++------ Additional config files ------
++-- For organizational purposes you may prefer to add VirtualHost and
++-- Component definitions in their own config files. This line includes
++-- all config files in /etc/prosody/conf.d/
++
++Include "conf.d/*.cfg.lua"
