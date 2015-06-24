@@ -1,0 +1,13 @@
+/var/log/prosody/prosody.* {
+	weekly
+	missingok
+	rotate 52
+	compress
+	delaycompress
+	notifempty
+	postrotate
+		/sbin/service prosody reload > /dev/null || true
+	endscript
+	create 0640 prosody prosody
+	sharedscripts
+}
