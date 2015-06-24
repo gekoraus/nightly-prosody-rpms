@@ -5,11 +5,11 @@
 Summary:           Flexible communications server for Jabber/XMPP
 Name:              prosody
 Version:           trunk
-Release:           1.nightly556%{?dist}
+Release:           1.nightly557%{?dist}
 License:           MIT
 Group:             System Environment/Daemons
 URL:               https://prosody.im/
-Source0:           https://prosody.im/nightly/0.10/build139/%{name}-%{version}-1nightly556.tar.gz
+Source0:           https://prosody.im/nightly/0.10/build139/%{name}-%{version}-1nightly557.tar.gz
 Source1:           prosody.init
 Source2:           prosody.logrotate-init
 Source3:           prosody.service
@@ -54,7 +54,7 @@ to be easy to extend and give a flexible system on which to rapidly develop
 added functionality, or prototype new protocols.
 
 %prep
-%setup -q -n %{name}-%{version}-1nightly556
+%setup -q -n %{name}-%{version}-1nightly557
 %patch0 -p1 -b .config
 
 %build
@@ -208,8 +208,8 @@ fi
 %{_mandir}/man1/%{name}*.1*
 
 %changelog
-* Wed Jun 24 2015 Robert Scheck <robert@fedoraproject.org> trunk-1.nightly556
-- Upgrade to trunk-1.nightly556
+* Wed Jun 24 2015 Robert Scheck <robert@fedoraproject.org> trunk-1.nightly557
+- Upgrade to trunk-1.nightly557
 
 * Sat Apr 18 2015 Robert Scheck <robert@fedoraproject.org> 0.9.8-1
 - Upgrade to 0.9.8 (#1152126)
