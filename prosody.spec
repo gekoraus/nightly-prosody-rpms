@@ -5,11 +5,11 @@
 Summary:           Flexible communications server for Jabber/XMPP
 Name:              prosody
 Version:           0.10
-Release:           1.nightly139%{?dist}
+Release:           1.nightly140%{?dist}
 License:           MIT
 Group:             System Environment/Daemons
 URL:               https://prosody.im/
-Source0:           https://prosody.im/nightly/0.10/build139/%{name}-%{version}-1nightly139.tar.gz
+Source0:           https://prosody.im/nightly/0.10/build140/%{name}-%{version}-1nightly140.tar.gz
 Source1:           prosody.init
 Source2:           prosody.logrotate-init
 Source3:           prosody.service
@@ -54,7 +54,7 @@ to be easy to extend and give a flexible system on which to rapidly develop
 added functionality, or prototype new protocols.
 
 %prep
-%setup -q -n %{name}-%{version}-1nightly139
+%setup -q -n %{name}-%{version}-1nightly140
 %patch0 -p1 -b .config
 
 %build
@@ -208,6 +208,9 @@ fi
 %{_mandir}/man1/%{name}*.1*
 
 %changelog
+* Mon Jun 29 2015 Robert Scheck <robert@fedoraproject.org> 0.10-1.nightly140
+- Upgrade to 0.10-1.nightly140
+
 * Wed Jun 24 2015 Robert Scheck <robert@fedoraproject.org> 0.10-1.nightly139
 - Upgrade to 0.10-1.nightly139
 
