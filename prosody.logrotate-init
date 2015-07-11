@@ -1,4 +1,4 @@
-/var/log/prosody/prosody.* {
+/var/log/prosody/prosody.log /var/log/prosody/prosody.err {
 	weekly
 	missingok
 	rotate 52
