@@ -5,11 +5,11 @@
 Summary:           Flexible communications server for Jabber/XMPP
 Name:              prosody
 Version:           trunk
-Release:           1.nightly568%{?dist}
+Release:           1.nightly569%{?dist}
 License:           MIT
 Group:             System Environment/Daemons
 URL:               https://prosody.im/
-Source0:           https://prosody.im/nightly/trunk/build568/%{name}-%{version}-1nightly568.tar.gz
+Source0:           https://prosody.im/nightly/trunk/build569/%{name}-%{version}-1nightly569.tar.gz
 Source1:           prosody.init
 Source2:           prosody.logrotate-init
 Source3:           prosody.service
@@ -18,6 +18,7 @@ Source5:           prosody.tmpfilesd
 Source6:           prosody-localhost.cfg.lua
 Source7:           prosody-example.com.cfg.lua
 Patch0:            prosody-0.10-config.patch
+Patch1:            prosody-0.10-rhel5.patch
 BuildRequires:     libidn-devel, openssl-devel
 Requires(pre):     shadow-utils
 %if 0%{?rhel} > 6 || 0%{?fedora} > 17
@@ -54,10 +55,15 @@ to be easy to extend and give a flexible system on which to rapidly develop
 added functionality, or prototype new protocols.
 
 %prep
-%setup -q -n %{name}-%{version}-1nightly568
+%setup -q -n %{name}-%{version}-1nightly569
 %patch0 -p1 -b .config
+%if 0%{?rhel} == 5
+%patch1 -p1
+%endif
+rm -f core/certmanager.lua.config
 
 %build
+# CFLAG -D_GNU_SOURCE requires fallocate() which requires GLIBC >= 2.10
 ./configure \
   --prefix=%{_prefix} \
   --libdir=%{_libdir} \
@@ -65,7 +71,11 @@ added functionality, or prototype new protocols.
   --with-lua-include=%{_includedir}/lua-%{luaver} \
   --runwith=lua-%{luaver} \
 %endif
+%if 0%{?rhel} != 5
   --cflags="$RPM_OPT_FLAGS -fPIC -D_GNU_SOURCE" \
+%else
+  --cflags="$RPM_OPT_FLAGS -fPIC" \
+%endif
   --ldflags="$RPM_LD_FLAGS -shared" \
   --no-example-certs
 make %{?_smp_mflags}
@@ -84,7 +94,10 @@ make -C tools/migration DESTDIR=$RPM_BUILD_ROOT install
 # Install ejabberd2prosody
 install -p -m 755 tools/ejabberd2prosody.lua $RPM_BUILD_ROOT%{_bindir}/ejabberd2prosody
 sed -e 's@;../?.lua@;%{_libdir}/%{name}/util/?.lua;%{_libdir}/%{name}/?.lua;@' \
-  -e '1s@ lua$@ lua-%{luaver}@' -i $RPM_BUILD_ROOT%{_bindir}/ejabberd2prosody
+%if 0%{?rhel} > 7 || 0%{?fedora} > 19
+  -e '1s@ lua$@ lua-%{luaver}@' \
+%endif
+  -i $RPM_BUILD_ROOT%{_bindir}/ejabberd2prosody
 touch -c -r tools/ejabberd2prosody.lua $RPM_BUILD_ROOT%{_bindir}/ejabberd2prosody
 install -p -m 644 tools/erlparse.lua $RPM_BUILD_ROOT%{_libdir}/%{name}/util/
 
@@ -208,17 +221,24 @@ fi
 %{_mandir}/man1/%{name}*.1*
 
 %changelog
-* Sun Jul 12 2015 Robert Scheck <robert@fedoraproject.org> trunk-1.nightly568
-- Upgrade to trunk-1.nightly568
+* Wed Nov 04 2015 Robert Scheck <robert@fedoraproject.org> trunk-1.nightly569
+- Upgrade to trunk-1.nightly569
 
-* Sun Jul 12 2015 Robert Scheck <robert@fedoraproject.org> trunk-1.nightly567
-- Upgrade to trunk-1.nightly567
+* Sun Sep 27 2015 Robert Scheck <robert@fedoraproject.org> 0.9.8-6
+- Fixed shebang for ejabberd2prosody
+- Backported support for IPv6 DNS servers (#1256677)
 
-* Mon Jun 29 2015 Robert Scheck <robert@fedoraproject.org> trunk-1.nightly566
-- Upgrade to trunk-1.nightly566
+* Sun Jul 23 2015 Robert Scheck <robert@fedoraproject.org> 0.9.8-5
+- Start after network-online.target not network.target (#1256062)
 
-* Wed Jun 24 2015 Robert Scheck <robert@fedoraproject.org> trunk-1.nightly565
-- Upgrade to trunk-1.nightly565
+* Wed Jul 15 2015 Robert Scheck <robert@fedoraproject.org> 0.9.8-4
+- Change default CA paths to /etc/pki/tls/certs(/ca-bundle.crt)
+
+* Wed Jul 01 2015 Robert Scheck <robert@fedoraproject.org> 0.9.8-3
+- Fixed the wrong logrotate configuration to not use a wildcard
+
+* Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.9.8-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
 * Sat Apr 18 2015 Robert Scheck <robert@fedoraproject.org> 0.9.8-1
 - Upgrade to 0.9.8 (#1152126)
