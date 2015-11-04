@@ -1,0 +1,35 @@
+Patch by Robert Scheck <robert@fedoraproject.org> for prosody >= 0.9.8 which removes all
+options that OpenSSL 0.9.8e (as shipped by Red Hat Enterprise Linux 5 and derivates such
+as CentOS) does not support: SSL_OP_NO_TICKET (added by upstream with OpenSSL 0.9.8f) and
+the support for secp384r1 (added by Red Hat for RHEL 6.5 with openssl-1.0.1e-15). LuaSec
+0.5 does not offer any option to detect which OpenSSL features are (not) available, thus
+Prosody upstream tries to determine them by the LuaSec version - risky, because EPEL 5 is
+shipping LuaSec 0.4.1 since ever, but still had no support for the "no_ticket" option.
+
+--- prosody-0.9.8/core/certmanager.lua			2015-03-24 20:18:04.000000000 +0100
++++ prosody-0.9.8/core/certmanager.lua.rhel5		2015-07-13 20:35:33.000000000 +0200
+@@ -34,7 +34,7 @@
+ local default_capath = "/etc/pki/tls/certs";
+ local default_cafile = "/etc/pki/tls/certs/ca-bundle.crt";
+ local default_verify = (ssl and ssl.x509 and { "peer", "client_once", }) or "none";
+-local default_options = { "no_sslv2", "no_sslv3", "cipher_server_preference", luasec_has_noticket and "no_ticket" or nil };
++local default_options = { "no_sslv2", "no_sslv3", "cipher_server_preference" };
+ local default_verifyext = { "lsec_continue", "lsec_ignore_purpose" };
+ 
+ if ssl and not luasec_has_verifyext and ssl.x509 then
+@@ -57,6 +57,7 @@
+ 
+ 	if not ssl then return nil, "LuaSec (required for encryption) was not found"; end
+ 	if not user_ssl_config then return nil, "No SSL/TLS configuration present for "..host; end
++	if user_ssl_config.options then user_ssl_config.options.no_ticket = nil; end
+ 	
+ 	local ssl_config = {
+ 		mode = mode;
+@@ -70,7 +71,6 @@
+ 		verifyext = user_ssl_config.verifyext or default_verifyext;
+ 		options = user_ssl_config.options or default_options;
+ 		depth = user_ssl_config.depth;
+-		curve = user_ssl_config.curve or "secp384r1";
+ 		ciphers = user_ssl_config.ciphers or "HIGH+kEDH:HIGH+kEECDH:HIGH:!PSK:!SRP:!3DES:!aNULL";
+ 		dhparam = user_ssl_config.dhparam;
+ 	};
