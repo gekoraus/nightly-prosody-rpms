@@ -1,15 +1,16 @@
 %global sslcert    %{_sysconfdir}/pki/%{name}/localhost.crt
 %global sslkey     %{_sysconfdir}/pki/%{name}/localhost.key
 %global luaver     5.1
+%global buildnr    342
 
 Summary:           Flexible communications server for Jabber/XMPP
 Name:              prosody
 Version:           0.10
-Release:           1.nightly342%{?dist}
+Release:           1.nightly%{buildnr}%{?dist}
 License:           MIT
 Group:             System Environment/Daemons
 URL:               https://prosody.im/
-Source0:           http://prosody.im/nightly/0.10/build342/%{name}-%{version}-1nightly342.tar.gz
+Source0:           http://prosody.im/nightly/0.10/build%{buildnr}/%{name}-%{version}-1nightly%{buildnr}.tar.gz
 Source1:           prosody.init
 Source2:           prosody.logrotate-init
 Source3:           prosody.service
@@ -55,7 +56,7 @@ to be easy to extend and give a flexible system on which to rapidly develop
 added functionality, or prototype new protocols.
 
 %prep
-%setup -q -n %{name}-%{version}-1nightly342
+%setup -q -n %{name}-%{version}-1nightly%{buildnr}
 %patch0 -p1 -b .config
 %if 0%{?rhel} == 5
 %patch1 -p1
@@ -221,7 +222,7 @@ fi
 %{_mandir}/man1/%{name}*.1*
 
 %changelog
-* Fri Feb 03 2017 Gero Kraus <geroy@fedoraproject.org> 0.10-1.nightly342
+* Fri Feb 03 2017 Gero Kraus <gero.kraus@rohedaten.de> 0.10-1.nightly342
 - Upgrade to 0.10-1.nightly342
 
 * Mon Feb 01 2016 Robert Scheck <robert@fedoraproject.org> 0.10-1.nightly207
