@@ -36,7 +36,7 @@ Requires(postun):  /sbin/service
 # on Fedora >= 20; luajit (compatible with 5.1) would be second choice.
 Requires:          compat-lua, lua-filesystem-compat, lua-expat-compat
 Requires:          lua-socket-compat, lua-sec-compat
-BuildRequires:     compat-lua-devel
+BuildRequires:     compat-lua, compat-lua-devel
 %else
 %if 0%{?rhel} > 6 || 0%{?fedora} > 15
 Requires:          lua(abi) = %{luaver}
@@ -44,7 +44,7 @@ Requires:          lua(abi) = %{luaver}
 Requires:          lua >= %{luaver}
 %endif
 Requires:          lua-filesystem, lua-expat, lua-socket, lua-sec
-BuildRequires:     lua-devel
+BuildRequires:     lua, lua-devel
 %endif
 BuildRoot:         %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -67,6 +67,7 @@ rm -f core/certmanager.lua.config
 %if 0%{?rhel} > 7 || 0%{?fedora} > 19
   --with-lua-include=%{_includedir}/lua-%{luaver} \
   --runwith=lua-%{luaver} \
+  --lua-suffix=-%{luaver} \
 %endif
   --cflags="$RPM_OPT_FLAGS -fPIC -D_GNU_SOURCE" \
   --ldflags="$RPM_LD_FLAGS -shared" \
@@ -215,7 +216,7 @@ fi
 
 %changelog
 * Mon Feb 06 2017 Gero Kraus <gero.kraus@rohedaten.de> 0.10-1.nightly342
--     Removed RHEL 5 compatibility since it's nearing EOL
+- Removed RHEL 5 compatibility since it's nearing EOL, fixed build for f25+f26
 
 * Fri Feb 03 2017 Gero Kraus <gero.kraus@rohedaten.de> 0.10-1.nightly342
 - Upgrade to 0.10-1.nightly342
