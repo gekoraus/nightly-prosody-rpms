@@ -19,7 +19,6 @@ Source5:           prosody.tmpfilesd
 Source6:           prosody-localhost.cfg.lua
 Source7:           prosody-example.com.cfg.lua
 Patch0:            prosody-0.10-config.patch
-Patch1:            prosody-0.10-rhel5.patch
 BuildRequires:     libidn-devel, openssl-devel
 Requires(pre):     shadow-utils
 %if 0%{?rhel} > 6 || 0%{?fedora} > 17
@@ -58,9 +57,6 @@ added functionality, or prototype new protocols.
 %prep
 %setup -q -n %{name}-%{version}-1nightly%{buildnr}
 %patch0 -p1 -b .config
-%if 0%{?rhel} == 5
-%patch1 -p1
-%endif
 rm -f core/certmanager.lua.config
 
 %build
@@ -72,11 +68,7 @@ rm -f core/certmanager.lua.config
   --with-lua-include=%{_includedir}/lua-%{luaver} \
   --runwith=lua-%{luaver} \
 %endif
-%if 0%{?rhel} != 5
   --cflags="$RPM_OPT_FLAGS -fPIC -D_GNU_SOURCE" \
-%else
-  --cflags="$RPM_OPT_FLAGS -fPIC" \
-%endif
   --ldflags="$RPM_LD_FLAGS -shared" \
   --no-example-certs
 make %{?_smp_mflags}
@@ -222,6 +214,9 @@ fi
 %{_mandir}/man1/%{name}*.1*
 
 %changelog
+* Mon Feb 06 2017 Gero Kraus <gero.kraus@rohedaten.de> 0.10-1.nightly342
+-     Removed RHEL 5 compatibility since it's nearing EOL
+
 * Fri Feb 03 2017 Gero Kraus <gero.kraus@rohedaten.de> 0.10-1.nightly342
 - Upgrade to 0.10-1.nightly342
 
