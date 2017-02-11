@@ -1,7 +1,7 @@
 %global sslcert    %{_sysconfdir}/pki/%{name}/localhost.crt
 %global sslkey     %{_sysconfdir}/pki/%{name}/localhost.key
 %global luaver     5.1
-%global buildnr    343
+%global buildnr    344
 
 Summary:           Flexible communications server for Jabber/XMPP
 Name:              prosody
@@ -215,6 +215,9 @@ fi
 %{_mandir}/man1/%{name}*.1*
 
 %changelog
+* Sat Feb 11 2017 Gero Kraus <gero.kraus@rohedaten.de> 0.10-1.nightly344
+- Upgrade to 0.10-1.nightly344
+
 * Mon Feb 06 2017 Gero Kraus <gero.kraus@rohedaten.de> 0.10-1.nightly343
 - Removed RHEL 5 compatibility since it's nearing EOL, fixed build for f25+f26
 
