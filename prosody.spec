@@ -1,7 +1,7 @@
 %global sslcert    %{_sysconfdir}/pki/%{name}/localhost.crt
 %global sslkey     %{_sysconfdir}/pki/%{name}/localhost.key
 %global luaver     5.1
-%global buildnr    345
+%global buildnr    362
 
 Summary:           Flexible communications server for Jabber/XMPP
 Name:              prosody
@@ -69,7 +69,7 @@ rm -f core/certmanager.lua.config
   --runwith=lua-%{luaver} \
   --lua-suffix=-%{luaver} \
 %endif
-  --cflags="$RPM_OPT_FLAGS -fPIC -D_GNU_SOURCE" \
+  --cflags="$RPM_OPT_FLAGS -fPIC -D_GNU_SOURCE -std=c99" \
   --ldflags="$RPM_LD_FLAGS -shared" \
   --no-example-certs
 make %{?_smp_mflags}
@@ -215,6 +215,9 @@ fi
 %{_mandir}/man1/%{name}*.1*
 
 %changelog
+* Thu Mar 16 2017 Gero Kraus <gero.kraus@rohedaten.de> 0.10-1.nightly362
+- Upgrade to 0.10-1.nightly362
+
 * Mon Feb 13 2017 Gero Kraus <gero.kraus@rohedaten.de> 0.10-1.nightly345
 - Upgrade to 0.10-1.nightly345
 
