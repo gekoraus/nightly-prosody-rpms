@@ -1,7 +1,7 @@
 %global sslcert    %{_sysconfdir}/pki/%{name}/localhost.crt
 %global sslkey     %{_sysconfdir}/pki/%{name}/localhost.key
 %global luaver     5.1
-%global buildnr    406
+%global buildnr    408
 
 Summary:           Flexible communications server for Jabber/XMPP
 Name:              prosody
@@ -215,6 +215,9 @@ fi
 %{_mandir}/man1/%{name}*.1*
 
 %changelog
+* Tue Aug 01 2017 Gero Kraus <gero.kraus@rohedaten.de> 0.10-1.nightly408
+- Upgrade to 0.10-1.nightly408
+
 * Sun Jul 09 2017 Gero Kraus <gero.kraus@rohedaten.de> 0.10-1.nightly406
 - Upgrade to 0.10-1.nightly406
 
